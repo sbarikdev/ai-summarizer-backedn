@@ -60,8 +60,8 @@ class DocumentViewSet(viewsets.ModelViewSet):
         for chunk in text_chunks:
             response = openai.Completion.create(
                 engine="text-davinci-003",
-                prompt=(f"Please summarize the following text:\n{chunk}\n\nSummary:"),
-                max_tokens=max_word,
+                prompt=(f"Please summarize and generate 2 MCQ Questions from  the following text:\n{chunk}\n\nSummary:"),
+                max_tokens=500,
                 temperature=0.5,
                 stop=None  # You can specify words to stop the summary generation if needed
             )
