@@ -32,6 +32,7 @@ def split_text(text):
     
     return chunks
 
+import random  # Import the random module
 
 class DocumentViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.all()
@@ -53,24 +54,46 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # Check if the total tokens in the prompt and completion exceed the model's limit
         text_chunks = split_text(pdf_text)
 
-        # Initialize the summary
+        # Initialize the summary and MCQs
         summary = ""
+        mcqs = ""
 
-        # Generate a summary using OpenAI (adjusted length)
+        # Generate a summary and MCQs using OpenAI (adjusted length)
         for chunk in text_chunks:
             response = openai.Completion.create(
                 engine="text-davinci-003",
-                prompt=(f"Please summarize and generate 2 MCQ Questions from  the following text:\n{chunk}\n\nSummary:"),
+                prompt=(f"Please summarize the following text:\n{chunk}\n\nSummary:"),
                 max_tokens=500,
                 temperature=0.5,
                 stop=None  # You can specify words to stop the summary generation if needed
             )
             chunk_summary = response.choices[0].text
             summary += chunk_summary
-        # summary = response.choices[0].text
 
-        # Save the document and summary to the database
-        document = Document(pdf_file=None, summary=summary)
+            # Generate MCQs for the chunk
+            response = openai.Completion.create(
+                engine="text-davinci-003",
+                prompt=(f"Generate 2 MCQ Questions from the following text:\n{chunk}\n\n"),  # Generate more MCQs
+                max_tokens=1500,  # Adjust the max_tokens as needed
+                temperature=0.5,
+                stop=None  # You can specify words to stop the MCQ generation if needed
+            )
+            chunk_mcqs = response.choices[0].text
+            mcqs += chunk_mcqs
+
+        # Split the generated MCQs into a list of individual questions
+        mcq_list = mcqs.split("Q.")
+
+        # Filter out empty questions
+        mcq_list = [question.strip() for question in mcq_list if question.strip()]
+
+        # Shuffle the list of questions and select 2 random questions
+        random.shuffle(mcq_list)
+        selected_mcqs = mcq_list[:2]
+
+        # Save the document, summary, and selected MCQs to the database
+        document = Document(pdf_file=None, summary=summary, mcqs="\n".join(selected_mcqs))
         document.save()
+        # mcqs_dict = {"Question 1": selected_mcqs[0], "Question 2": selected_mcqs[1]}
 
-        return JsonResponse({'message': 'Document uploaded and summary generated successfully.', 'summary': document.summary}, status=200)
+        return JsonResponse({'message': 'Document uploaded and summary and MCQs generated successfully.', 'summary': document.summary, 'mcqs': document.mcqs}, status=200)
