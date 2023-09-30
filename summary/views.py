@@ -59,7 +59,7 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # Generate a summary using OpenAI (adjusted length)
         for chunk in text_chunks:
             response = openai.Completion.create(
-                engine="davinci",
+                engine="text-davinci-003",
                 prompt=(f"Please summarize the following text:\n{chunk}\n\nSummary:"),
                 max_tokens=max_word,
                 temperature=0.5,
