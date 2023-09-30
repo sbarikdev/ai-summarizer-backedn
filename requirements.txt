@@ -7,7 +7,7 @@ certifi==2023.7.22
 charset-normalizer==3.2.0
 colorama==0.4.6
 dj-database-url==2.1.0
-Django==4.2.5
+Django
 django-cors-headers==4.2.0
 django-filter==23.3
 djangorestframework==3.14.0
