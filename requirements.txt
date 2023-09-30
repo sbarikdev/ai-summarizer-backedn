@@ -8,11 +8,11 @@ charset-normalizer==3.2.0
 colorama==0.4.6
 dj-database-url==2.1.0
 Django
-django-cors-headers==4.2.0
-django-filter==23.3
-djangorestframework==3.14.0
-frozenlist==1.4.0
-gunicorn==21.2.0
+django-cors-headers
+django-filter
+djangorestframework
+frozenlist
+gunicorn
 idna==3.4
 Markdown==3.4.4
 multidict==6.0.4
