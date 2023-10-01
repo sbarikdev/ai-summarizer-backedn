@@ -97,3 +97,9 @@ class DocumentViewSet(viewsets.ModelViewSet):
         # mcqs_dict = {"Question 1": selected_mcqs[0], "Question 2": selected_mcqs[1]}
 
         return JsonResponse({'message': 'Document uploaded and summary and MCQs generated successfully.', 'summary': document.summary, 'mcqs': document.mcqs}, status=200)
+
+
+class SummaryAPIView(viewsets.ModelViewSet):
+    serializer_class = DocumentSerializer
+    queryset = Document.objects.all()
+    
